@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "111322775161",
+    "project_id": "repushup-android",
+    "storage_bucket": "repushup-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:111322775161:android:18c6721ea9e34ed8f25ea8",
+        "android_client_info": {
+          "package_name": "com.app.pushup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "111322775161-4pebh6chg90gao3m8isnqh20upefc971.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.pushup",
+            "certificate_hash": "dd790feeb0a50d37b1af6a519502064f6e401e1d"
+          }
+        },
+        {
+          "client_id": "111322775161-itl66ls8468qfev718r8qoj7pb889lu2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh_BYBxWpqgOx21133ss0Keml8kjX4eMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "111322775161-itl66ls8468qfev718r8qoj7pb889lu2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
