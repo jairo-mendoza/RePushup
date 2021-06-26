@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         // Instantiate global variables
         mAuth = FirebaseAuth.getInstance()
+        val currentUser = mAuth.currentUser
         repInput = findViewById(R.id.repET)
         uploadButton = findViewById(R.id.uploadBtn)
 
@@ -41,7 +42,13 @@ class MainActivity : AppCompatActivity() {
         val timeF = SimpleDateFormat("hh:mm:ss")
         val currentTime = timeF.format(Date())
 
-        val currentUser = mAuth.currentUser
+        val repInfoTV = findViewById<TextView>(R.id.repInfoLabelTV)
+
+        rootNode = FirebaseDatabase.getInstance()
+        reference = rootNode.getReference("User-Info")
+        if (currentUser != null) {
+            dailyReference = rootNode.getReference("User-Info/${currentUser.uid}/${currentDate}")
+        }
 
         // Check if user is logged in
         if(currentUser != null) {
@@ -49,28 +56,51 @@ class MainActivity : AppCompatActivity() {
             changeGreeting()
         }
 
-        uploadButton.setOnClickListener {
+        // Check daily reps
+        var dataListener = object: ValueEventListener {
             var currentDailyReps: Int = 0
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                // Check if value exists
+                if(snapshot.exists()) {
+                    repInfoTV.text = "Daily Pushup Reps: ${snapshot.value.toString()}"
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        }
+
+        dailyReference.child("Daily-Reps").addListenerForSingleValueEvent(dataListener)
+
+        uploadButton.setOnClickListener {
+            var currentDailyReps: Int
 
             if (currentUser != null) {
                 // Write a message to the database
-                rootNode = FirebaseDatabase.getInstance()
-                reference = rootNode.getReference("User-Info")
-                dailyReference = rootNode.getReference("User-Info/${currentUser.uid}/${currentDate}")
 
                 userInfo = UserInfo(repInput.text.toString().toInt())
 
+                // Saves inputted data to user id
+                val childPath = "${currentUser.uid}/${currentDate}/${currentTime}"
+                reference.child(childPath).setValue(userInfo)
+                Toast.makeText(this@MainActivity, "Uploaded Information", Toast.LENGTH_SHORT).show()
 
                 var dataListener = object: ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         // Check if value exists
                         if(!snapshot.exists()) {
                             dailyReference.child("Daily-Reps").setValue(userInfo.totalReps)
+                            currentDailyReps = snapshot.value.toString().toInt()
+                            repInfoTV.text = "Daily Pushup Reps: $currentDailyReps"
                         }
                         else {
                             currentDailyReps = snapshot.value.toString().toInt()
                             currentDailyReps += userInfo.totalReps
                             dailyReference.child("Daily-Reps").setValue(currentDailyReps)
+                            repInfoTV.text = "Daily Pushup Reps: $currentDailyReps"
                         }
                     }
 
@@ -81,11 +111,6 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 dailyReference.child("Daily-Reps").addListenerForSingleValueEvent(dataListener)
-
-                // Saves inputted data to user id
-                val childPath = "${currentUser.uid}/${currentDate}/${currentTime}"
-                reference.child(childPath).setValue(userInfo)
-                Toast.makeText(this@MainActivity, "Uploaded Information", Toast.LENGTH_SHORT).show()
             }
         }
     }
