@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RePushup">
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".FinishPushupActivity"></activity>
+        <activity android:name=".RestActivity" />
+        <activity android:name=".PushupActivity" />
+        <activity android:name=".SettingsActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

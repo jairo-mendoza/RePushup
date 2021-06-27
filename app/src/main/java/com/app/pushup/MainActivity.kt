@@ -2,11 +2,7 @@ package com.app.pushup
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -18,7 +14,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mAuth: FirebaseAuth
     private lateinit var repInput: EditText
-    private lateinit var uploadButton: Button
+    private lateinit var startWorkoutButton: Button
+    private lateinit var toSettingsButton: ImageButton
     private lateinit var rootNode: FirebaseDatabase
     private lateinit var reference: DatabaseReference
     private lateinit var dailyReference: DatabaseReference
@@ -32,7 +29,11 @@ class MainActivity : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth.currentUser
         repInput = findViewById(R.id.repET)
-        uploadButton = findViewById(R.id.uploadBtn)
+        startWorkoutButton = findViewById(R.id.startWrkOutBtn)
+        toSettingsButton = findViewById(R.id.toSettingsBttn)
+
+        // Set text field input filters, restricting numbers inputted
+        repInput.filters = arrayOf(RepMinMaxInput("1", "100"))
 
         // Get date
         val dateF = SimpleDateFormat("M-dd-yyyy")
@@ -42,40 +43,38 @@ class MainActivity : AppCompatActivity() {
         val timeF = SimpleDateFormat("hh:mm:ss")
         val currentTime = timeF.format(Date())
 
-        val repInfoTV = findViewById<TextView>(R.id.repInfoLabelTV)
+        val repInfoTV: TextView = findViewById(R.id.repInfoLabelTV)
 
         rootNode = FirebaseDatabase.getInstance()
         reference = rootNode.getReference("User-Info")
         if (currentUser != null) {
             dailyReference = rootNode.getReference("User-Info/${currentUser.uid}/${currentDate}")
-        }
 
-        // Check if user is logged in
-        if(currentUser != null) {
             // Change greeting
             changeGreeting()
-        }
 
-        // Check daily reps
-        var dataListener = object: ValueEventListener {
-            var currentDailyReps: Int = 0
 
-            override fun onDataChange(snapshot: DataSnapshot) {
-                // Check if value exists
-                if(snapshot.exists()) {
-                    repInfoTV.text = "Daily Pushup Reps: ${snapshot.value.toString()}"
+            // Check daily reps
+            val dataListener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    // Check if value exists
+                    if (snapshot.exists()) {
+                        repInfoTV.text = "Daily Pushup Reps: ${snapshot.value.toString()}"
+                    }
                 }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
+            dailyReference.child("Daily-Reps").addListenerForSingleValueEvent(dataListener)
         }
 
-        dailyReference.child("Daily-Reps").addListenerForSingleValueEvent(dataListener)
-
-        uploadButton.setOnClickListener {
+        // Start workout button click listener
+        startWorkoutButton.setOnClickListener {
+            // Upload data
             var currentDailyReps: Int
 
             if (currentUser != null) {
@@ -86,21 +85,17 @@ class MainActivity : AppCompatActivity() {
                 // Saves inputted data to user id
                 val childPath = "${currentUser.uid}/${currentDate}/${currentTime}"
                 reference.child(childPath).setValue(userInfo)
-                Toast.makeText(this@MainActivity, "Uploaded Information", Toast.LENGTH_SHORT).show()
 
                 var dataListener = object: ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         // Check if value exists
                         if(!snapshot.exists()) {
                             dailyReference.child("Daily-Reps").setValue(userInfo.totalReps)
-                            currentDailyReps = snapshot.value.toString().toInt()
-                            repInfoTV.text = "Daily Pushup Reps: $currentDailyReps"
                         }
                         else {
                             currentDailyReps = snapshot.value.toString().toInt()
                             currentDailyReps += userInfo.totalReps
                             dailyReference.child("Daily-Reps").setValue(currentDailyReps)
-                            repInfoTV.text = "Daily Pushup Reps: $currentDailyReps"
                         }
                     }
 
@@ -112,34 +107,48 @@ class MainActivity : AppCompatActivity() {
 
                 dailyReference.child("Daily-Reps").addListenerForSingleValueEvent(dataListener)
             }
+
+            // Check if text field actually holds a value
+            if(repInput.text.toString().isNotEmpty()) {
+                val maxRep = repInput.text.toString().toInt()
+                val intent: Intent = Intent(this@MainActivity, PushupActivity::class.java)
+                intent.putExtra("currReps", maxRep)
+                startActivity(intent)
+                finish()
+            }
+            else {
+                Toast.makeText(this@MainActivity, "Please enter a value.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        toSettingsButton.setOnClickListener {
+            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
         }
     }
 
-    fun changeGreeting() {
+    private fun changeGreeting() {
         val greetingTextView: TextView = findViewById(R.id.greetingTV)
+        val userName = mAuth.currentUser?.displayName.toString()
+        val userFirstName = userName.substring(0, userName.indexOf(' ')).trim()
 
         // Get hour
         val c = Calendar.getInstance()
         val hour = c.get(Calendar.HOUR_OF_DAY)
 
         if((hour in 0..5) || (hour in 21..24)) {
-            greetingTextView.text = "Good night!"
+            greetingTextView.text = "Good night, $userFirstName!"
         }
         else if(hour in 6..11) {
-            greetingTextView.text = "Good morning!"
+            greetingTextView.text = "Good morning, $userFirstName!"
         }
         else if(hour in 12..17) {
-            greetingTextView.text = "Good afternoon!"
+            greetingTextView.text = "Good afternoon, $userFirstName!"
         }
         else if(hour in 18..20) {
-            greetingTextView.text = "Good evening!"
+            greetingTextView.text = "Good evening, $userFirstName!"
         }
         else {
-            greetingTextView.text = "Hello!"
+            greetingTextView.text = "Hello, $userFirstName!"
         }
-    }
-
-    fun toSettingsActivity(v: View) {
-        startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
     }
 }

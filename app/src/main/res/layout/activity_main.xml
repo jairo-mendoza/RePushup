@@ -20,44 +20,60 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/InfoLayout">
 
-        <Button
-            android:id="@+id/uploadBtn"
+        <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="252dp"
-            android:text="Upload"
-            android:fontFamily="@font/heebo_regular"
-            android:textAllCaps="false"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="32dp"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.503"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <EditText
-            android:id="@+id/repET"
-            android:layout_width="167dp"
-            android:layout_height="51dp"
-            android:layout_marginTop="36dp"
-            android:ems="10"
-            android:fontFamily="@font/heebo_regular"
-            android:hint="0"
-            android:inputType="number"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.702"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/settingsButton"
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/heebo_regular"
+                android:text="Max Reps:"
+                android:textColor="#0A1128"
+                android:textSize="24sp" />
+
+            <EditText
+                android:id="@+id/repET"
+                android:layout_width="167dp"
+                android:layout_height="51dp"
+                android:backgroundTint="#0A1128"
+                android:ems="10"
+                android:fontFamily="@font/heebo_regular"
+                android:hint="1"
+                android:inputType="number"
+                android:textColor="#0A1128"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/startWrkOutBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="toSettingsActivity"
-            android:text="Button"
+            android:layout_marginTop="12dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/rounded_button"
+            android:drawableEnd="@android:drawable/ic_media_play"
             android:fontFamily="@font/heebo_regular"
+            android:text="Start Workout"
             android:textAllCaps="false"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/white"
+            android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -66,43 +82,55 @@
         android:layout_height="292dp"
         android:background="#0A1128"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/greetingTV"
-            android:layout_width="match_parent"
+            android:id="@+id/repInfoLabelTV"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="40dp"
+            android:layout_marginTop="37dp"
+            android:layout_marginBottom="56dp"
+            android:fontFamily="@font/heebo_regular"
+            android:text="You have no recorded reps today!"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/greetingTV"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageButton
+            android:id="@+id/toSettingsBttn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:scaleType="fitXY"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_icons8_settings__big" />
+
+        <TextView
+            android:id="@+id/greetingTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="68dp"
             android:fontFamily="@font/heebo_regular"
             android:text="Hello!"
             android:textColor="@color/white"
             android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/repInfoLabelTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="40dp"
-            android:text="You have no recorded reps today!"
-            android:textColor="@color/white"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/greetingTV"
-            app:layout_constraintVertical_bias="0.164" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
