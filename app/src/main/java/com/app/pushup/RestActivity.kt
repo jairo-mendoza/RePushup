@@ -14,6 +14,7 @@ class RestActivity : AppCompatActivity() {
     private lateinit var prevButton: Button
     private lateinit var nextUpTextView: TextView
     private lateinit var receivedIntent: Intent
+    private lateinit var timer: CountDownTimer
     private var currentReps = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +37,7 @@ class RestActivity : AppCompatActivity() {
         timeBar.progress = 0
 
         // Countdown timer for resting
-        object : CountDownTimer(60000, 1000) {
+        timer = object : CountDownTimer(60000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 countDownTime.text = ("${(millisUntilFinished / 60000)}:${(millisUntilFinished % 60000 / 1000).toString().padStart(2, '0')}")
                 timeBar.progress += 1
@@ -64,6 +65,7 @@ class RestActivity : AppCompatActivity() {
 
         // On click listener for skip button
         skipButton.setOnClickListener {
+            timer.cancel()
             if(currentReps > 1) {
                 val intent = Intent(this@RestActivity, PushupActivity::class.java)
                 intent.putExtra("currReps", currentReps - 1)
@@ -79,6 +81,7 @@ class RestActivity : AppCompatActivity() {
 
        // On click listener for previous button
        prevButton.setOnClickListener {
+           timer.cancel()
            val intent = Intent(this@RestActivity, PushupActivity::class.java)
            intent.putExtra("currReps", currentReps)
            startActivity(intent)
@@ -88,6 +91,7 @@ class RestActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+        timer.cancel()
         startActivity(Intent(this@RestActivity, MainActivity::class.java))
     }
 }
